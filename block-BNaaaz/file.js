@@ -10,6 +10,7 @@ let fs = require("fs");
 let server = http.createServer(handleRequest);
 
 function handleRequest(req, res) {
+    res.setHeader("content-type", "text/plain");
     fs.createReadStream("./readme.txt").pipe(res);
 }
 
