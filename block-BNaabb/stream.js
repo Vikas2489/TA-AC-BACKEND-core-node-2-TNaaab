@@ -8,7 +8,6 @@ function handleRequest(req, res) {
         store += chunk;
     });
     req.on('end', () => {
-        res.setHeader("content-type", "text/plain");
         res.write(store);
         res.end();
     });
