@@ -14,20 +14,20 @@ let qs = require("querystring");
 let server = http.createServer(handleRequest);
 
 function handleRequest(req, res) {
-    let dataFormat = req.headers['content-type'];
-    console.log(dataFormat);
+
     let store = "";
     req.on("data", (chunk) => {
         store += chunk;
     })
 
     req.on("end", () => {
-        if (dataFormat === "application/json") {
-            var parsedData = JSON.parse(store);
+        if (req.method === "POST" && req.url === "/json") {
+            res.setHeader("content-type", "application/json")
             res.end(store);
-        } else if (dataFormat === 'text/plain') {
-            // var parsedData = qs.parse(store);
-            res.end(store);
+        } else if (req.method === "POST" && req.url === "/form") {
+            let parsedData = qs.parse(store);
+            res.setHeader("content-type", "application/json");
+            res.end(JSON.stringify(parsedData));
         }
     })
 }
@@ -35,3 +35,11 @@ function handleRequest(req, res) {
 server.listen(7000, () => {
     console.log("Port listening on 7000");
 })
+
+// if (dataFormat === "application/json") {
+//   var parsedData = JSON.parse(store);
+//   res.end(store);
+// } else if (dataFormat === 'multipart/form-data; boundary=----WebKitFormBoundarysLv84pRA4wyKtgu9') {
+//   var parsedData = qs.parse(store);
+//   res.end(store);
+// }
