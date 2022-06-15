@@ -41,7 +41,7 @@ function handleRequest(req, res) {
 
     req.on('end', () => {
         if (req.method === "POST" && req.url === "/") {
-            res.writeStatusCode = 201;
+            res.statusCode = 201;
             res.end(store);
         }
     })
@@ -65,7 +65,7 @@ function handleRequestForm(req, res) {
 
     req.on('end', () => {
         if (req.method === "POST" && req.url === "/") {
-            res.writeStatusCode = 201;
+            res.statusCode = 201;
             let parsedQuery = qs.parse(store);
             res.end(parsedQuery.captain);
         }
