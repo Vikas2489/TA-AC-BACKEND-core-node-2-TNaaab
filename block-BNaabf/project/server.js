@@ -15,28 +15,46 @@ let relativePath = `/Users/vikas/Desktop/projects/client/index.js`;
 
 let http = require("http");
 let fs = require("fs");
+let qs = require("querystring");
 
 
 let server = http.createServer(handleRequest);
 
 function handleRequest(req, res) {
     let store = "";
-    if (req.method === "GET" && req.url === "/form") {
-        fs.readFile("./form.html", (err, cnt) => {
-            res.end(cnt);
-        })
-    } else if (req.method === "POST" && req.url === "/form") {
-        req.on('data', (chunk) => {
-            store += chunk;
-        })
+    req.on('data', (chunk) => {
+        store += chunk;
+    })
 
-        req.on('end', () => {
-            let parsedData = JSON.parse(store);
+    req.on('end', () => {
+        if (req.method === "GET" && req.url === "/form") {
             res.setHeader("content-type", "text/html");
-            console.log(parsedData);
-            res.end(`<h1>${parsedData.name}</h1> <p>${parsedData.age}</p> <h2>${parsedData.email}</h2>`)
-        })
-    }
+            fs.createReadStream("./form.html").pipe(res);
+        } else if (req.method === "POST" && req.url === "/form") {
+            let parsedData = qs.parse(store);
+            res.setHeader("content-type", "text/html");
+            res.end(`<h1>${parsedData.username}</h1> <p>${parsedData.age}</p> <h2>${parsedData.Email}</h2>`)
+        }
+    });
+
+    // my way of solving it:- 
+
+    // if (req.method === "GET" && req.url === "/form") {
+    //     fs.readFile("./form.html", (err, cnt) => {
+    //         res.end(cnt);
+    //     })
+    // } else if (req.method === "POST" && req.url === "/form") {
+    //     req.on('data', (chunk) => {
+    //         store += chunk;
+    //     })
+
+    //     req.on('end', () => {
+    //         let parsedData = qs.parse(store);
+    //         res.setHeader("content-type", "text/html");
+    //         console.log(parsedData);
+    //         res.end(`<h1>${parsedData.username}</h1> <p>${parsedData.age}</p> <h2>${parsedData.Email}</h2>`)
+    //     })
+    // }
 }
 
 
