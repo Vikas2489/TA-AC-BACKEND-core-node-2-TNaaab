@@ -93,15 +93,15 @@ let server9000 = http.createServer(handleRequest9000);
 
 function handleRequest9000(req, res) {
     let dataFormat = req.headers['content-type'];
-    let store = "";
+    let store = '';
     req.on('data', (chunk) => {
         store += chunk;
     })
 
     req.on('end', () => {
         if (dataFormat === "application/json") {
-            res.setHeader("content-type", "application/json");
-            // let parsed = JSON.parse(store);
+            let parsedData = JSON.parse(store);
+            console.log(parsedData);
             res.end(store);
         } else if (dataFormat === "application/x-www-form-urlencoded") {
             let parsedData = qs.parse(store);
@@ -130,11 +130,36 @@ function handleRequest9999(req, res) {
     })
 
     req.on('end', () => {
-        res.setHeader("content-type", "application/json");
-        res.write(typeof store);
-        res.end(store);
+        var jsonData = JSON.parse(store);
+        res.setHeader("content-type", "text/html");
+        res.end(`<h2>${jsonData.name}</h2><p>${jsonData.email}</hp>`)
     })
 
 };
 
 server9999.listen(9999);
+
+// Q. Follow above question with form data containing fields i.e name and email. 
+// - Parse form-data using `querystring` module
+// - respond with HTML page containing only email from data in H2 tag.
+
+
+
+let server9090 = http.createServer(handleRequest9090);
+
+function handleRequest9090(req, res) {
+    let store = "";
+    req.on('data', (chunk) => {
+        store += chunk;
+    })
+
+    req.on('end', () => {
+        var jsonData = qs.parse(store);
+        console.log(jsonData);
+        res.setHeader("content-type", "text/html");
+        res.end(`<h2>${jsonData.name}</h2><p>${jsonData.email}</hp>`)
+    })
+
+};
+
+server9090.listen(9090);
