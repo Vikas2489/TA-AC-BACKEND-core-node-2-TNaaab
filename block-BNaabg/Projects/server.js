@@ -22,8 +22,8 @@ function handleRequest(req, res) {
                 // fd is a file discriptor (an integer) which will points to the newly created file
                 fs.writeFile(fd, store, (err) => {
                     if (err) return console.log(err);
-                    fs.close(fd, (err) => {
-                        res.end(`${username} created successfully.`)
+                    fs.close(fd, () => {
+                        return res.end(`${username} created successfully.`)
                     })
                 })
 
@@ -32,13 +32,14 @@ function handleRequest(req, res) {
         // get user
         else if (parsedUrl.pathname === "/users" && req.method === "GET") {
             let searchForfileName = parsedUrl.query.username;
-            fs.createReadStream(__dirname + '/users/' + searchForfileName + '.json').pipe(res);
+            return fs.createReadStream(__dirname + '/users/' + searchForfileName + '.json').pipe(res);
         }
         // delete user
         else if (parsedUrl.pathname === "/users" && req.method === "DELETE") {
             let searchForfileName = parsedUrl.query.username;
             fs.unlink(__dirname + '/users/' + searchForfileName + '.json', (err) => {
                 if (err) return console.log(err);
+                return res.end(`${searchForfileName} deleted successfully`)
             })
         }
         // update user
@@ -50,7 +51,9 @@ function handleRequest(req, res) {
                     if (err) return console.log(err);
                     fs.writeFile(fd, store, (err) => {
                         if (err) return console.log(err);
-                        res.end(`${searchForfileName} updated successfully.`)
+                        fs.close(fd, () => {
+                            return res.end(`${searchForfileName} updated successfully.`)
+                        })
                     })
                 })
             })
